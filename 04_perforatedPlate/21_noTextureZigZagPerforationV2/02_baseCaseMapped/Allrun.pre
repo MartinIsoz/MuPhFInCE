@@ -1,0 +1,30 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# create mesh
+runApplication blockMesh
+
+#convert holes to cyclic patches
+runApplication createPatch -overwrite
+
+# copy IC
+mkdir 0
+cp -rf 0.org/* 0
+
+paraFoam -touch
+
+# get the parent case
+sourceCase=
+
+# map the fields from PARENT - not decomposed
+runApplication mapFields -sourceTime latestTime $sourceCase -consistent
+mv log.mapFields log.mapFields.Undecomposed
+
+# decompose the case
+runApplication decomposePar
+
+# map the fields from PARENT - decomposed (there seems to be a problem with decomposition of mapped fields)
+runApplication mapFields -parallelTarget -sourceTime latestTime $sourceCase -consistent

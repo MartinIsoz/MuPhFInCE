@@ -1,0 +1,26 @@
+#!/bin/sh
+cd ${0%/*} || exit 1    # run from this directory
+
+# Source tutorial run functions
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+./Allrun.pre
+
+application=`getApplication`
+
+runApplication decomposePar
+
+#~ mkdir processor0/0
+#~ mkdir processor1/0
+#~ mkdir processor2/0
+#~ mkdir processor3/0
+#~ cp -rf 0.org/* processor0/0
+#~ cp -rf 0.org/* processor1/0
+#~ cp -rf 0.org/* processor2/0
+#~ cp -rf 0.org/* processor3/0
+
+runParallel $application 4
+
+#runApplication reconstructParMesh -mergeTol 1e-6 -constant
+runApplication reconstructPar
+

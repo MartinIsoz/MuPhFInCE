@@ -1,0 +1,89 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.2.2                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    location    "system";
+    object      setFieldsDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+defaultFieldValues//Comment out if I do not want to rewrite the original field
+(
+    volScalarFieldValue alpha.liquid 0
+);
+
+regions
+(
+    boxToCell
+          {
+              box (-1 -1 -1) (1 1 0.1e-3);
+              fieldValues
+              (
+                  volScalarFieldValue alpha.liquid 1
+              );
+          }
+    //~ cylinderToCell
+          //~ {
+              //~ p1 (0	-0.0021520790536	0);
+              //~ p2 (0	0.0021520790536	0);
+              //~ radius 	0.0135963311905;
+              //~ fieldValues
+              //~ (
+                  //~ volScalarFieldValue alpha.liquid 1
+              //~ );
+          //~ }
+    //~ cylinderToCell
+      //~ {
+          //~ p1 (0	-0.0021520790536	0);
+          //~ p2 (0	0.0021520790536	0);
+          //~ radius 	0.0135963311905;
+          //~ fieldValues
+          //~ (
+              //~ volScalarFieldValue alpha.liquid 0
+          //~ );
+      //~ }
+      //~ cylinderToCell
+      //~ {
+          //~ p1 (0	-0.0021520790536	0);
+          //~ p2 (0	0.0021520790536	0);
+          //~ radius 	0.0135963311905;
+          //~ fieldValues
+          //~ (
+              //~ volScalarFieldValue alpha.liquid 0
+          //~ );
+      //~ }
+          //~ {
+              //~ box (-10 -100 -10) (350 200 1);
+              //~ fieldValues
+              //~ (
+                  //~ volScalarFieldValue alpha.liquid 1
+              //~ );
+          //~ }
+    //~ boxToCell
+          //~ {
+              //~ box (250 -100 -10) (350 100 100);
+              //~ fieldValues
+              //~ (
+                  //~ volScalarFieldValue alpha.liquid 0
+              //~ );
+          //~ } 
+    //~ boxToCell
+          //~ {
+              //~ box (-150 -10 -150) (150 10 150);
+              //~ fieldValues
+              //~ (
+                  //~ volScalarFieldValue alpha.liquid 1
+              //~ );
+          //~ } 
+);
+
+
+// ************************************************************************* //

@@ -1,0 +1,90 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {//good for Re(inlet) specification, inlet height + UX -> Re
+        type            fixedValue;
+        value           uniform (0.01 0 0);
+    }
+    gasOutlet
+    {//like atmosphere 1 (might cause stability issues)
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+    //~ {//what comes out, comes out
+        //~ type            inletOutlet;
+        //~ value           $internalField;//what comes out comes out
+        //~ inletValue      uniform (0 0 0);//nothing should go in
+    //~ }
+    outlet
+    //~ {
+        //~ type            pressureInletOutletVelocity;
+        //~ value           uniform (1 0 0);
+    //~ }
+    {//what comes out, comes out
+        type            inletOutlet;
+        value           $internalField;//what comes out comes out
+        inletValue      uniform (0 0 0);//nothing should go in
+    }
+    plate
+    {//partial slip (very small) works better for spreading
+        //~ type            partialSlip;
+        //~ value           uniform (0 0 0);
+        //~ valueFraction   uniform 0.98;//1 - no-slip, 0 - slip
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    sides
+    {//standard wall BC (geometry sides)
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    holesTop
+    //~ {//cyclic BC liquid going out from the bottom comes back from the top
+        //~ type            cyclic;
+    //~ }
+    {
+        type                mapped;
+        value               uniform (0 0 -0.1);                         //should be ignored by the solver
+        interpolationScheme cell;
+        setAverage          false;
+        average             (0 0 -0.1);
+    }
+    holesBottom
+    //~ {
+        //~ type            pressureInletOutletVelocity;
+        //~ value           uniform (0 0 -0.1);
+    //~ }
+    {//what comes out, comes out
+        type            inletOutlet;
+        value           $internalField;//what comes out comes out
+        inletValue      uniform (0 0 0);//nothing should go in
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

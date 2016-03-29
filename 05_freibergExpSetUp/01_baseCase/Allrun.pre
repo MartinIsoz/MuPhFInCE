@@ -1,0 +1,24 @@
+#!/bin/sh
+. $WM_PROJECT_DIR/bin/tools/RunFunctions
+
+# -- Clear old IC
+rm -rf 0
+
+# create mesh
+runApplication blockMesh
+# -- get rid of interfaces
+runApplication stitchMesh -perfect -overwrite overInletMaster overInletSlave
+# -- get rid of corresponding boundary entries
+runApplication createPatch -overwrite
+
+# -- copy IC
+mkdir 0
+cp -rf 0.org/* 0
+
+runApplication setFields
+
+# -- run the mapFields utility (only if the case is a CHILD)
+#PARENT=
+#mapFields ../$PARENT -sourceTime latestTime -consistent
+
+paraFoam -touch

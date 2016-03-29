@@ -1,0 +1,99 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volVectorField;
+    location    "0";
+    object      U;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 1 -1 0 0 0 0];
+
+internalField   uniform (0 0 0);
+
+boundaryField
+{
+    inlet
+    {//good for Re(inlet) specification, inlet height + UX -> Re
+        type            fixedValue;
+        value           uniform (0.01 0 0);
+    }
+    //~ {//other possibility, specify inlet flow rate
+        //~ type            flowRateInletVelocity;
+        //~ massFlowRate    constant 0.001;
+        //~ value           uniform (0 0 0);
+    //~ }
+    overInlet
+    //~ {//artificial wall (go-to possibility)
+        //~ type            fixedValue;
+        //~ value           uniform (0 0 0);
+    //~ }
+    //~ {//improved stability (very low co-current gas flow)
+        //~ type            fixedValue;
+        //~ value           uniform (0.001 0 0);
+    //~ }
+    //~ {//like atmosphere 1 (might cause stability issues)
+        //~ type            pressureInletOutletVelocity;
+        //~ value           uniform (0 0 0);
+    //~ }
+    {//what comes out, comes out
+        type            outletInlet;
+        value           $internalField;//what comes out comes out
+        outletValue     uniform (0 0 0);//nothing should go in
+    }
+    //~ {// like atmosphere 2 (might cause stability issues)
+        //~ type            fluxCorrectedVelocity;
+    //~ }
+    outlet
+    //~ {
+        //~ type            fluxCorrectedVelocity;
+    //~ }
+    //~ {
+        //~ type            pressureInletOutletVelocity;
+        //~ value           uniform (1 0 0);
+    //~ }
+    {//what comes out, comes out
+        type            inletOutlet;
+        value           $internalField;//what comes out comes out
+        inletValue      uniform (0 0 0);//nothing should go in
+    }
+    //~ {
+        //~ type            zeroGradient;
+    //~ }
+    plate
+    {//partial slip (very small) works better for spreading
+        //~ type            partialSlip;
+        //~ value           uniform (0 0 0);
+        //~ valueFraction   uniform 0.98;//1 - no-slip, 0 - slip
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    sides
+    {//standard wall BC (geometry sides)
+        type            fixedValue;
+        value           uniform (0 0 0);
+    }
+    atmosphere
+    //~ {//the top geometry side is open to atmosphere
+        //~ type            fluxCorrectedVelocity;
+    //~ }
+    {//like atmosphere 1 (might cause stability issues)
+        type            pressureInletOutletVelocity;
+        value           uniform (0 0 0);
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

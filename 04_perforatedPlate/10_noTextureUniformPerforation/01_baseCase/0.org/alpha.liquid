@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {//only liquid is getting in
+        type            fixedValue;
+        value           uniform 1;
+    }
+    gasOutlet
+    //~ {//only gas is getting in
+        //~ type            fixedValue;
+        //~ value           uniform 0;  
+    //~ }
+    {//what comes out, comes out - like atmosphere - may cause stability issues
+        type            inletOutlet;
+        value           $internalField;
+        inletValue      uniform 0;
+    }//other possibility - wrong combination of BC may cause stability issues
+    //~ {//inletOutlet may cause liquid accumulation (oF220+)
+        //~ type            zeroGradient;
+    //~ }
+    outlet
+    {//what comes out, comes out
+        type            inletOutlet;
+        value           $internalField;//preferably liquid is getting out
+        inletValue      uniform 0;//if something should go out, it should be gas
+    }
+    //~ {//inletOutlet may cause liquid accumulation (oF220+)
+        //~ type            zeroGradient;
+    //~ }
+    plate
+    {//H2O (Freiberg values, "partial spreading")
+        type           dynamicAlphaContactAngle;
+        theta0         50;
+        uTheta         1;
+        thetaA         60;
+        thetaR         40; 
+        limit          gradient;
+        value          uniform 0;
+    }
+    //~ {//H2O (Freiberg values, "partial spreading")
+        //~ type           constantAlphaContactAngle;
+        //~ theta0         50;
+        //~ limit          gradient;
+        //~ value          uniform 0;
+    //~ }
+    sides
+    {//H2O (Freiberg values, "partial spreading")
+        type           dynamicAlphaContactAngle;
+        theta0         50;
+        uTheta         1;
+        thetaA         60;
+        thetaR         40; 
+        limit          gradient;
+        value          uniform 0;
+    }
+    //~ {//H2O (Freiberg values, "partial spreading")
+        //~ type           constantAlphaContactAngle;
+        //~ theta0         50;
+        //~ limit          gradient;
+        //~ value          uniform 0;
+    //~ }
+    holesTop
+    {//cyclic BC liquid going out from the bottom comes back from the top
+        type            cyclic;
+    }
+    holesBottom
+    {//cyclic BC liquid going out from the bottom comes back from the top
+        type            cyclic;
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //

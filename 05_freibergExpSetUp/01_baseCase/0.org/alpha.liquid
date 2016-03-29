@@ -1,0 +1,61 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2.1.1                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.org                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alpha;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 0 0 0 0 0 0];
+
+internalField   uniform 0;
+
+boundaryField
+{
+    inlet
+    {//only liquid is getting in
+        type            fixedValue;
+        value           uniform 1;
+    }
+    outlet
+    {//what comes out, comes out
+        type            inletOutlet;
+        value           $internalField;//preferably liquid is getting out
+        inletValue      uniform 0;//if something should go out, it should be gas
+    }
+    walls
+    {
+        type            zeroGradient;
+    }
+    atmosphere
+    {//what comes out, comes out - like atmosphere
+        type            inletOutlet;
+        value           $internalField;
+        inletValue      uniform 0;//in should go only the gas
+    }
+    plate
+    {//H2O (Freiberg values, "partial spreading")
+        type           dynamicAlphaContactAngle;
+        theta0         50;
+        uTheta         1;
+        thetaA         60;
+        thetaR         40; 
+        limit          gradient;
+        value          $internalField;
+    }
+    defaultFaces
+    {
+        type            empty;
+    }
+}
+
+
+// ************************************************************************* //
