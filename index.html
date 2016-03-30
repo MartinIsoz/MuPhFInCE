@@ -1,30 +1,51 @@
-<!DOCTYPE html>
-<html lang="en-us">
+<!doctype html>
+<html>
   <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Muphfince by MartinIsoz</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" href="stylesheets/normalize.css" media="screen">
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen">
-    <link rel="stylesheet" type="text/css" href="stylesheets/github-light.css" media="screen">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-dark.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
   </head>
   <body>
-    <section class="page-header">
-      <h1 class="project-name">Muphfince</h1>
-      <h2 class="project-tagline">Repository to store the codes used in research of MUltiPHase Flows IN Chemical Engineering (MuPhFInCE)</h2>
-      <a href="https://github.com/MartinIsoz/MuPhFInCE" class="btn">View on GitHub</a>
-      <a href="https://github.com/MartinIsoz/MuPhFInCE/zipball/master" class="btn">Download .zip</a>
-      <a href="https://github.com/MartinIsoz/MuPhFInCE/tarball/master" class="btn">Download .tar.gz</a>
-    </section>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/MartinIsoz/MuPhFInCE">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/MartinIsoz/MuPhFInCE/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/MartinIsoz/MuPhFInCE/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
 
-    <section class="main-content">
-      <h1>
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Muphfince</h1>
+          <p>Repository to store the codes used in research of MUltiPHase Flows IN Chemical Engineering (MuPhFInCE)</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/MartinIsoz">MartinIsoz</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="https://twitter.com/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>
 <a id="muphfince" class="anchor" href="#muphfince" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>MuPhFInCE</h1>
 
 <p>Repository to store the codes used by the MUltiPHase Flows IN Chemical Engineering (MuPhFInCE) research group of the University of Chemistry and Technology in Prague (UCT Prague).</p>
 
 <p>The principal aim of the repository is to share the case settings and utilities between the group members. Our main tools are OpenFOAM, Paraview and Python.</p>
+
+<hr>
 
 <h2>
 <a id="research-motivation-and-background" class="anchor" href="#research-motivation-and-background" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Research motivation and background</h2>
@@ -80,8 +101,47 @@
 
 <p>As the nature of our work would suggest, we closely cooperate with the <a href="http://www.mass-transfer.cz">Mass transfer group of UCT Prague</a> as well as with the <a href="http://fchi.vscht.cz/veda-a-vyzkum/vyzkumna-pracoviste/cfd">CFD Laboratory of UCT Prague (cs)</a>.</p>
 
+<hr>
+
+<h2>
+<a id="general-description-of-the-studied-problem" class="anchor" href="#general-description-of-the-studied-problem" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>General description of the studied problem</h2>
+
+<ul>
+<li>Problem category: Multiphase (Free surface) flows</li>
+<li>Solution methodology:
+
+<ul>
+<li>Low Reynolds numbers in both liquid and gas phases -&gt; Incompressible fluids</li>
+<li>OpenFOAM solver -&gt; Finite Volume Method (FVM)</li>
+<li>Simple geometries -&gt; (mostly) structured hex meshes</li>
+<li>Multiphase solution method -&gt; Volume of Fluid (interFOAM solver)</li>
+</ul>
+</li>
+<li>Challenges:
+
+<ul>
+<li>Liquid spreading is of utmost importance</li>
+<li>The problems are transient</li>
+<li>The processes are multiscale (length and velocity scales in the main flow direction differs from the ones defining the spreading dynamics)</li>
+</ul>
+</li>
+</ul>
+
 <h2>
 <a id="droplet-spreading" class="anchor" href="#droplet-spreading" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Droplet spreading</h2>
+
+<h3>
+<a id="motivation" class="anchor" href="#motivation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Motivation</h3>
+
+<p>The quality of the solution for the spreading flows depends heavily on the accuraccy of the description of the spreading. Hence a simple case of a liquid drop spreading on a horizontal substrate was taken as a benchmark situation and several different discretization schemes were thoroughly compared.</p>
+
+<h3>
+<a id="results" class="anchor" href="#results" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Results</h3>
+
+<h4>
+<a id="unphysical-behavior-of-some-discretization-schemes" class="anchor" href="#unphysical-behavior-of-some-discretization-schemes" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Unphysical behavior of some discretization schemes</h4>
+
+<p><a href="http://www.youtube.com/watch?feature=player_embedded&amp;v=1489XkMI6X4%0A"><img src="http://img.youtube.com/vi/1489XkMI6X4/20.jpg" alt="Droplet spreading" width="480" height="360" border="10"></a></p>
 
 <h2>
 <a id="liquid-flow-down-an-inclined-plate" class="anchor" href="#liquid-flow-down-an-inclined-plate" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Liquid flow down an inclined plate</h2>
@@ -106,15 +166,10 @@
 
 <h2>
 <a id="liquid-flow-between-two-perforated-plates" class="anchor" href="#liquid-flow-between-two-perforated-plates" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Liquid flow between two perforated plates</h2>
+      </section>
 
-      <footer class="site-footer">
-        <span class="site-footer-owner"><a href="https://github.com/MartinIsoz/MuPhFInCE">Muphfince</a> is maintained by <a href="https://github.com/MartinIsoz">MartinIsoz</a>.</span>
-
-        <span class="site-footer-credits">This page was generated by <a href="https://pages.github.com">GitHub Pages</a> using the <a href="https://github.com/jasonlong/cayman-theme">Cayman theme</a> by <a href="https://twitter.com/jasonlong">Jason Long</a>.</span>
-      </footer>
-
-    </section>
-
-  
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
   </body>
 </html>
