@@ -41,7 +41,8 @@ def dfluidData(liqName):
     return {
         'DC05'  : [17.57e-3,920.0,5.073e-3,5.0,10.0,0.0],               #silicon oil
         'DC10'  : [17.89e-3,940.0,10.419e-3,5.0,10.0,0.0],              #silicon oil
-        'H2O'   : [55.18e-3,998.0,1.178e-3,60,70,50],                   #water
+        'H2O'   : [55.18e-3,998.0,1.178e-3,60,70,50],                   #water (Freiberg)
+        'H2OCk' : [72.80e-3,997.0,8.899e-4,70,75,65],                   #water (Cooke et al. 2012)
         'SURF'  : [29.36e-3,998.0,1.114e-3,0.0,0.0,0.0],                #water with surfactants
         'AIR'   : [0,1.184,18.408e-6,0.0,0.0,0.0],                      #air at 25 deg C
     }.get(liqName,'DC10')
