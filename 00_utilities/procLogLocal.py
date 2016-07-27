@@ -50,6 +50,9 @@ import numpy as np
 import re                                                               #regexp
 # -- plotting
 import matplotlib.pyplot as plt
+import textwrap
+
+#CUSTOM FUNCTIONS=======================================================
 
 #INPUT VARIABLES========================================================
 # -- for which variables I want to see the residuals
@@ -60,12 +63,7 @@ varInt  = ['p_rgh']
 nRezSt  = 2                                                             #number of timesteps to show reziduals for (keep low, there is alway +- 5 points for each timestep)
 nPimpIt = 50                                                            #number of timesteps to show number of PIMPLE iterations for (if a very high number is specified, all the simulation timesteps will be shown)
 
-# -- checked case
-caseName= 'iF_Re30.0_60.0_H2OCk_PTV2_INIT'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_TTV2_MAPPED'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_PT'
-
-
+#MAIN===================================================================
 strAux  = [
              'echo "$(head /proc/cpuinfo | grep ',
               "'model name')",
@@ -74,6 +72,8 @@ strAux  = [
           ]
 
 sTitle = os.popen(strAux[0] + strAux[1] + strAux[2] + strAux[3]).read()
+
+sTitle = sTitle[:-1]                                                    #cut out the last (newLine) character
 
 # -- local location
 checkDir= os.getcwd() + '/'                                             #get current directory
@@ -94,7 +94,7 @@ outVar = []
 
 #DO NOT MODIFY (PREFERABLY)=============================================
 # -- figure window parameters
-plt.figure(num=None, figsize=(20, 12), dpi=80, facecolor='w', edgecolor='k')
+fig = plt.figure(num=None, figsize=(20, 12), dpi=80, facecolor='w', edgecolor='k')
 plt.show(block=False)
 # -- colors for plots with unknown number of lines
 plotCols = [np.random.rand(3,1) for i in range(len(varInt))]
@@ -148,8 +148,9 @@ while True:
     Case   = Case.split('/')                                            #extract relevant data from the case
     Case   = Case[-1]
     
-    plt.suptitle("%s, %d cores, %.1fMM cells, case: %s,\n"%(sTitle, nProcs, nCells, Case) + 
-                 "solver: %s, version: %s\n"%(Exec, Build),
+    ttlStr = ("%s, %d cores, %.1fMM cells, case: %s, "%(sTitle, nProcs, nCells, Case) + 
+                 "solver: %s, version: %s"%(Exec, Build))
+    plt.suptitle("\n".join(textwrap.wrap(ttlStr, 100)),
                  fontsize=24)
     
     
@@ -158,7 +159,7 @@ while True:
              'Time = ',
             ] 
     
-    vec   = [[],[]]
+    vec   = [[] for i in range(len(idStr))]
         
     for j in range(len(idStr)):
         for i in range(len(data)):
@@ -224,7 +225,7 @@ while True:
                 'Interface Courant Number',
             ]
             
-    vec = [[],[],[],[]]
+    vec = [[] for i in range(2*len(idStr))]
     
     for j in range(len(idStr)):
         for i in range(len(data)):
@@ -271,7 +272,7 @@ while True:
     
     idStr = ['Solving for %s'%varName for varName in varInt]            #in which variables am I interested
     
-    vec   = [[]]*len(varInt)                                            #reziduals
+    vec   = [[] for i in range(len(varInt))]                            #reziduals
             
     for i in range(len(partData)):                                      #go through the partData
         for j in range(len(idStr)):                                     #go throught the variables of interest
@@ -284,14 +285,15 @@ while True:
                 
     plt.subplot(2,3,3)
     plt.cla()                                                           #clear the current axis
-    # time.sleep(0.5)
+    mLen = max([len(v) for v in vec])                                   #maximal vector length
     for i in range(len(varInt)):
-        plt.semilogy(vec[i],'s-',c=plotCols[i],label=varInt[i])
+        cLen = len(vec[i])
+        plt.semilogy(np.linspace(0,mLen,cLen),vec[i],'s-',c=plotCols[i],label=varInt[i])
     plt.title('Reziduals evolution')
     plt.ylabel('Reziduals')
     plt.xlabel('last %d PIMPLE iterations'%nCntr)
     plt.xlim([0,len(vec[0])])
-    plt.ylim([1e-8,1])
+    plt.ylim([1e-10,1])
     plt.grid(True, which='major')
     plt.legend(bbox_to_anchor=(0.7, 0.95), loc=2, borderaxespad=0.)
     plt.draw()
@@ -341,6 +343,7 @@ while True:
     
     #SAVE THE RESULTING FIGURE AND UPDATE GRAPHS========================
     # -- draw the figure
+    plt.tight_layout(rect=[0, 0.03, 1, 0.90])
     plt.savefig('runAnalysis.png', dpi=160)
     plt.draw()    
     

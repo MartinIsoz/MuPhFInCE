@@ -50,6 +50,7 @@ import numpy as np
 import re                                                               #regexp
 # -- plotting
 import matplotlib.pyplot as plt
+import textwrap
 
 #CUSTOM FUNCTIONS=======================================================
 def avServers(rName):
@@ -81,26 +82,12 @@ nRezSt  = 2                                                             #number 
 nPimpIt = 50                                                            #number of timesteps to show number of PIMPLE iterations for (if a very high number is specified, all the simulation timesteps will be shown)
 
 # -- checked case
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_CN_linUW_intComp'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_UW'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_PTV2_INIT'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_TTV2_MAPPED'
-#~ caseName= 'iF_Re20.0_60.0_H2OCk_PT'
-caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.009mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.014mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.020mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.027mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.035mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.079mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.118mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_SMV2_VCell0.210mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_PTV2_VCell0.020mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_PTV2_VCell0.035mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_PTV2_VCell0.079mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_TTV2_VCell0.020mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_TTV2_VCell0.035mm3'
-#~ caseName= 'iF_Re30.0_60.0_H2OCk_TTV2_VCell0.079mm3'
-#~ caseName= 'iF_Re240.0_60.0_H2OCk_PSV3_INIT'
+#~ caseName= 'testCase'
+#~ caseName= 'testCaseV2'
+#~ caseName= 'testCaseV3'
+#~ caseName= 'testCaseInlet1'
+#~ caseName= 'testCaseInlet2'
+caseName= 'testCaseMulti1'
 
 # -- remote server
 rName   = 'Altix'
@@ -116,8 +103,8 @@ checkDir= os.getcwd() + '/'                                             #get cur
 fileList= ['log.blockMesh', 'log.interFoam']
 
 # -- periodic updating of the figures
-updatePl= True                                                          #update the plot?
-updInt  = 10                                                            #update interval in seconds
+updatePl= False                                                          #update the plot?
+updInt  = 15                                                            #update interval in seconds
 
 # -- graphical output parameters
 eMS     = 10                                                            #marker size to show the current timestep
@@ -188,17 +175,17 @@ while True:
     Case   = Case.split('/')                                            #extract relevant data from the case
     Case   = Case[-1]
     
-    plt.suptitle("%s, %d cores, %.1fMM cells, case: %s,\n"%(sTitle, nProcs, nCells, Case) + 
-                 "solver: %s, version: %s\n"%(Exec, Build),
-                 fontsize=24)
-    
+    ttlStr = ("%s, %d cores, %.1fMM cells, case: %s, "%(sTitle, nProcs, nCells, Case) + 
+                 "solver: %s, version: %s"%(Exec, Build))
+    plt.suptitle("\n".join(textwrap.wrap(ttlStr, 100)),
+                 fontsize=24)    
     
     #PLOT TIMESTEPEVOLUTION=============================================
     idStr = ['deltaT = ',
              'Time = ',
             ] 
     
-    vec   = [[],[]]
+    vec   = [[] for i in range(len(idStr))]
         
     for j in range(len(idStr)):
         for i in range(len(data)):
@@ -264,7 +251,7 @@ while True:
                 'Interface Courant Number',
             ]
             
-    vec = [[],[],[],[]]
+    vec   = [[] for i in range(2*len(idStr))]
     
     for j in range(len(idStr)):
         for i in range(len(data)):
@@ -311,7 +298,7 @@ while True:
     
     idStr = ['Solving for %s'%varName for varName in varInt]            #in which variables am I interested
     
-    vec   = [[]]*len(varInt)                                            #reziduals
+    vec   = [[] for i in range(len(varInt))]                            #reziduals
             
     for i in range(len(partData)):                                      #go through the partData
         for j in range(len(idStr)):                                     #go throught the variables of interest
@@ -324,14 +311,15 @@ while True:
                 
     plt.subplot(2,3,3)
     plt.cla()                                                           #clear the current axis
-    # time.sleep(0.5)
+    mLen = max([len(v) for v in vec])                                   #maximal vector length
     for i in range(len(varInt)):
-        plt.semilogy(vec[i],'s-',c=plotCols[i],label=varInt[i])
+        cLen = len(vec[i])
+        plt.semilogy(np.linspace(0,mLen,cLen),vec[i],'s-',c=plotCols[i],label=varInt[i])
     plt.title('Reziduals evolution')
     plt.ylabel('Reziduals')
     plt.xlabel('last %d PIMPLE iterations'%nCntr)
     plt.xlim([0,len(vec[0])])
-    plt.ylim([1e-8,1])
+    plt.ylim([1e-10,1])
     plt.grid(True, which='major')
     plt.legend(bbox_to_anchor=(0.7, 0.95), loc=2, borderaxespad=0.)
     plt.draw()
@@ -381,6 +369,8 @@ while True:
     
     #SAVE THE RESULTING FIGURE AND UPDATE GRAPHS========================
     # -- draw the figure
+    #~ plt.tight_layout()
+    plt.tight_layout(rect=[0, 0.03, 1, 0.90])
     plt.savefig('runAnalysis.png', dpi=160)
     plt.draw()    
     
